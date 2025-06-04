@@ -14,11 +14,9 @@ func (t TokenType) String() string {
 const (
 	ILLEGAL TokenType = iota
 	EOF
-	// Identifiers and literals
+	// Identifiers
 	IDENT
 	INT
-	ASSIGN
-	PLUS
 
 	// Delimiters
 	COMMA
@@ -32,16 +30,33 @@ const (
 	// Keywords
 	FUNCTION
 	LET
+	TRUE
+	FALSE
+	IF
+	ELSE
+	RETURN
+
+	// Operators
+	ASSIGN
+	PLUS
+	MINUS
+	BANG
+	ASTERISK
+	SLASH
+	LT
+	GT
+
+	EQ
+	NOT_EQ
 )
 
+// ORDER MATTERS AND SHOULD BE SAME AS IOTA CONSTANTS
 var tokenNames = []string{
 	"ILLEGAL",
 	"EOF",
-	// Identifiers and literals
+	// Identifiers
 	"IDENT",
 	"INT",
-	"ASSIGN",
-	"PLUS",
 
 	// Delimiters
 	"COMMA",
@@ -55,9 +70,50 @@ var tokenNames = []string{
 	// Keywords
 	"FUNCTION",
 	"LET",
+	"TRUE",
+	"FALSE",
+	"IF",
+	"ELSE",
+	"RETURN",
+
+	// Operators
+	"ASSIGN",
+	"PLUS",
+	"MINUS",
+	"BANG",
+	"ASTERISK",
+	"SLASH",
+	"LT",
+	"GT",
+
+	"EQ",
+	"NOT_EQ",
+}
+
+var keywords = map[string]TokenType{
+	"fn":     FUNCTION,
+	"let":    LET,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
+	"true":   TRUE,
+	"false":  FALSE,
+	"eq":     EQ,
+	"not_eq": NOT_EQ,
+}
+
+func LookupIdent(ident string) TokenType {
+	if tok, ok := keywords[ident]; ok {
+		return tok
+	}
+	return IDENT
 }
 
 type Token struct {
 	Type    TokenType
 	Literal string
+}
+
+func (t *Token) String() string {
+	return fmt.Sprintf("Token - Type=%q,Literal=%q", t.Type.String(), t.Literal)
 }
