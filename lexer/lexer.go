@@ -2,8 +2,8 @@ package lexer
 
 import (
 	"fmt"
-	"log"
 
+	"github.com/apex-woot/monkey-interpreter/dlog"
 	"github.com/apex-woot/monkey-interpreter/token"
 )
 
@@ -21,14 +21,14 @@ func (l *Lexer) String() string {
 func New(input string) *Lexer {
 	l := &Lexer{input: input}
 	l.readChar()
-	log.Printf("[lexer] created new lexer using \"\n%s\n\"\n", l.input)
+	dlog.Debug.Printf("[lexer] created new lexer using \"\n%s\n\"\n", l.input)
 	return l
 }
 
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	l.eatWhitespace()
-	fmt.Printf("[lexer] eat whitespace -  %s\n", &tok)
+	dlog.Debug.Printf("[lexer] eat whitespace -  %s\n", &tok)
 	switch l.ch {
 	case '=':
 		if l.peakChar() == '=' {
@@ -74,23 +74,23 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.EOF, l.ch)
 	default:
 		if isLetter(l.ch) {
-			fmt.Printf("[lexer] %q is a letter\n", l.ch)
+			dlog.Debug.Printf("[lexer] %q is a letter\n", l.ch)
 			tok.Literal = l.readLiteral(isLetter)
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
-			fmt.Printf("[lexer] %q is a digit\n", l.ch)
+			dlog.Debug.Printf("[lexer] %q is a digit\n", l.ch)
 			tok.Literal = l.readLiteral(isDigit)
 			tok.Type = token.INT
 			return tok
 		} else {
-			fmt.Printf("[lexer] %q is unknown\n", l.ch)
+			dlog.Debug.Printf("[lexer] %q is unknown\n", l.ch)
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
 	}
 
-	fmt.Printf("l.ch - %q\n", l.ch)
-	fmt.Printf("[lexer] returning %s\n", &tok)
+	dlog.Debug.Printf("l.ch - %q\n", l.ch)
+	dlog.Debug.Printf("[lexer] returning %s\n", &tok)
 	l.readChar()
 	return tok
 }
@@ -101,7 +101,7 @@ func (l *Lexer) readLiteral(condition func(byte) bool) string {
 		l.readChar()
 	}
 	literal := l.input[position:l.position]
-	fmt.Printf("[lexer] read literal %s\n", literal)
+	dlog.Debug.Printf("[lexer] read literal %s\n", literal)
 	return literal
 }
 
@@ -114,7 +114,7 @@ func isLetter(ch byte) bool {
 }
 
 func (l *Lexer) eatWhitespace() {
-	fmt.Printf("[lexer] eating whitespace %s\n", l)
+	dlog.Debug.Printf("[lexer] eating whitespace %s\n", l)
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
